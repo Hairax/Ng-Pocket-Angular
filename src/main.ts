@@ -45,6 +45,15 @@ import { NgFor, NgIf } from '@angular/common';
           (keyup.enter)="agregarGasto()"      
         />      
       </div> 
+      <div>
+        <label for="costo">Price</label>
+        <input
+          id="costo"
+          type="number"
+          [(ngModel)]="costo"
+          (keyup.enter)="agregarGasto()"
+        />
+      </div>
       <button (click)="agregarGasto()"> Add Spent</button>
     </div>
     <div class="contenedor-lista">
@@ -56,8 +65,9 @@ import { NgFor, NgIf } from '@angular/common';
       <ul>
         <li *ngFor="let gasto of gastos">
           <p>{{gasto.nombre}}</p>
+          <span>{{gasto.cantidad}} Units</span>
           <div>
-            <span>{{gasto.cantidad}} Bs</span>
+            <span>{{gasto.costo}} Bs</span>
           </div>
         </li>
       </ul>
@@ -72,27 +82,32 @@ export class App {
   name = 'Rodri';
   nombreGasto = '';
   cantidadGasto = 0;
+  costo = 0;
   gastos: Gasto[] = [];
   presupuesto = 0;
   saldo = 0;
 
   agregarGasto(): void {
-    if (this.cantidadGasto != 0 && this.nombreGasto != '') {
-      const gasto = new Gasto(this.nombreGasto, this.cantidadGasto);
+    if (this.cantidadGasto != 0 && this.nombreGasto != '' && this.costo != 0) {
+      const gasto = new Gasto(this.nombreGasto, this.cantidadGasto, this.costo);
       this.gastos.push(gasto);
-      this.saldo -= gasto.cantidad;
+      this.saldo -= gasto.cantidad * gasto.costo;
       if (this.saldo < 0) {
         alert('Your budget is minor to 0, the finaly product remove to list');
-        this.saldo += gasto.cantidad;
+        this.saldo += gasto.cantidad * gasto.costo;
         this.gastos.pop();
       }
       this.nombreGasto = '';
       this.cantidadGasto = 0;
+      this.costo = 0;
     } else if (this.nombreGasto != '') {
       alert('Alert. The amount is 0!');
     } else if (this.cantidadGasto != 0) {
       alert('Alert the name of product is empty');
-    } else {
+    } else if(this.costo != 0) {
+      alert('Alert the Price is 0');
+    }
+    else {
       alert('Alert the fields are empty');
     }
   }
